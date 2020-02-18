@@ -1,0 +1,111 @@
+body{
+	background-color: gray;
+	padding:1%;
+}
+
+ul{
+	list-style-type: circle;
+}
+
+.inner-box{
+	float:left;
+	height:100%;
+}
+
+.container{
+	height:100%;
+	width:100%;
+}
+
+.row1{
+	width:100%;
+	height:57%;
+}
+
+.row2{
+	width:100%;
+	height:43%;
+	bottom:0;
+}
+
+.row1 div center{
+	padding:2.35%;
+}
+
+.source{
+	width:42%;
+}
+
+.detection{
+	width:42%;
+}
+
+.panel{
+	width:16%;
+}
+
+.result{
+	width:34%;
+}
+
+.fact{
+	width:33%;
+}
+
+.rule{
+	width:33%;
+}
+
+.text{
+	height:5%;
+}
+
+.image-box{
+	text-align:left;
+	width:97%;
+	margin-top:1%;
+	height:85%;
+	background-color: white;
+	display:inline-block;
+	vertical-align: middle;
+	overflow:auto;
+}
+
+.img-placeholder{
+	margin-top:18vh;
+}
+
+.panel-btn{
+	background-color:white;
+	border:1px solid rgb(200,200,200);
+	border-radius: 5px;
+	width:80%;
+	margin-left:10%;
+	margin-top:3%;
+	margin-bottom:3%;
+}
+
+.buttons{
+	margin-top:18%;
+	height:30%;
+}
+
+.shapes{
+	background-color: white;
+	height:50%;
+	margin-top:7%;
+	overflow:auto;
+}
+
+.shapes div{
+	padding-top:2px;
+	padding-bottom: 2px;
+}
+
+.shape-0{
+	margin-left: 10%;
+}
+
+.shape-1{
+	margin-left: 20%;
+}

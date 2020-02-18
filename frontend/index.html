@@ -1,0 +1,226 @@
+<html>
+<head>
+	<title>Image Shape Detector</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="height=device-height, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="css/nested.css"/>
+	<script src="https://kit.fontawesome.com/0354ca31d0.js" crossorigin="anonymous"></script>
+</head>
+<body style="margin:0">
+	<div class="container">
+		<div class="row1">
+			<div class="source inner-box">
+				<center>
+					<b>Source Image</b>
+					<div class="image-box">
+						<div id="img-render" class="img-placeholder" style="margin:0;text-align:center">
+								<h3 style="margin-top:19vh"> Please select an image </h3>
+								<h6> Click -> Open Image Button </h6>
+						</div>
+					</div>
+				</center>
+			</div>
+			<div class="detection inner-box">
+				<center>
+					<b>All rules</b>
+					<div class="image-box">
+						<div id="all-rules">
+
+						</div>
+					</div>
+				</center>
+			</div>
+			<div class="panel inner-box">
+				<div class="buttons">
+					<button class="panel-btn" id="openImg">Open Image</button>
+					<form id="imgForm" style="display: none;">
+						<input id="image" type="file" name="file"/>
+					</form>
+					<button class="panel-btn" id="showRules">Show Rules</button>
+					<center>Shapes possibilities</center>
+				</div>
+				<div class="shapes">
+					<!-- <div class="shape-0">
+						<i class="fas fa-caret-down"></i> All Shapes
+						
+					</div> -->
+					<ul id="myUL">
+					  <li><span class="caret">Semua bentuk</span>
+					    <ul class="nested">
+					      <li><span class="caret">Segitiga tidak beraturan</span>
+					        <ul class="nested">
+					          <li>Segitiga lancip</li>
+					          <li>Segitiga tumpul</li>
+					          <li>Segitiga siku-siku</li>
+					          <li><span class="caret">Segitiga sama kaki</span>
+					            <ul class="nested">
+					              <li>Segitiga sama kaki dan siku-siku</li>
+					              <li>Segitiga sama kaki dan tumpul</li>
+					              <li>Segitiga sama kaki dan lancip</li>
+					            </ul>
+					          </li>
+					          <li>Segitiga sama sisi</li>
+					        </ul>
+					      </li>
+					      <li><span class="caret">Segiempat tidak beraturan</span>
+					      	<ul class="nested">
+					      		<li><span class="caret">Jajaran genjang</span>
+						            <ul class="nested">
+						            	<li>Segiempat beraturan</li>
+						            	<li>Segiempat berbentuk layang-layang</li>
+						            </ul>
+						            <li><span class="caret">Trapesium</span>
+							            <ul class="nested">
+							            	<li>Trapesium sama kaki</li>
+							            	<li>Trapesium rata kanan</li>
+							            	<li>Trapesium rata kiri</li>
+							            </ul>
+						        	</li>
+						        </li>
+					      	</ul>
+					      </li>
+					      <li><span class="caret">Segi lima tidak beraturan</span>
+					      	<ul class="nested">
+					      		<li>Segi lima sama sisi</li>
+					      	</ul>
+					      </li>
+					      <li><span class="caret">Segi enam tidak beraturan</span>
+					      	<ul class="nested">
+					      		<li>Segi enam sama sisi</li>
+					      	</ul>
+					      </li>
+					    </ul>
+					  </li>
+					</ul>	
+				</div>
+			</div>
+		</div>
+		<div class="row2">
+			<div class="result inner-box">
+				<center>
+					Detection Result
+					<div class="image-box" id="detect-res">
+
+					</div>
+				</center>
+			</div>
+			<div class="fact inner-box">
+				<center>
+					Matched Facts
+					<div class="image-box" id="fact-res">
+
+					</div>
+				</center>
+			</div>
+			<div class="rule inner-box">
+				<center>
+					Hit Rules
+					<div class="image-box" id="activation-res">
+
+					</div>
+				</center>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+<script src="js/jquery.min.js" type="text/javascript"/></script>
+<script type="text/javascript">
+	var rules = []
+	var facts = []
+	var activations = []
+	var res = ""
+
+	var toggler = document.getElementsByClassName("caret")
+	var i
+
+	for (i = 0; i < toggler.length; i++) {
+	  toggler[i].addEventListener("click", function() {
+	    this.parentElement.querySelector(".nested").classList.toggle("active")
+	    this.classList.toggle("caret-down")
+	  })
+	}
+
+	$("#showRules").click(function(){
+		if(rules.length == 0){alert("Open an image first!")}
+		else{
+			str = '<ul style="list-style-type:disc;">'
+			rules.forEach(function(item){
+				str+="<li>"+item+"</li>"
+			})
+			str += "</ul>"
+			$("#all-rules").html(str)
+		}
+	})
+
+	$("#openImg").click(function(){
+		$('#image').trigger('click')
+	})
+
+	$('#image').change(function(){
+		img = $('#image').prop('files')[0]
+		data = new FormData()
+		data.append("file",img)
+		readURL(this)
+		uploadFile(data)
+	})
+
+	function readURL(input) {
+	    if (input.files && input.files[0]) {
+	        var reader = new FileReader();
+
+	        reader.onload = function (e) {
+	            $('#img-render').html('<img style="width100%;height:100%" src='+e.target.result+'></img>')
+	        }
+
+	        reader.readAsDataURL(input.files[0]);
+	    }
+	}
+
+	function update(data){
+		rules = data.rules
+		facts = data.facts
+		activations = data.activations
+		result = facts[facts.length-1]
+		var i
+		for(i=0;i<facts.length;i++){
+			if(facts[i].includes('result')){
+				result = '<h3 style="text-align:center">'+facts[i].substr(9, facts[i].length-11)+"</h3>"
+			}
+		}
+		$('#detect-res').html(result)
+		str = '<ul style="list-style-type:disc;">'
+		facts.forEach(function(item){
+			str+="<li>"+item+"</li>"
+		})
+		str += "</ul>"
+		$('#fact-res').html(str)
+
+		str = '<ul style="list-style-type:disc;">'
+		activations.forEach(function(item){
+			str+="<li>"+item+"</li>"
+		})
+		str += "</ul>"
+		$('#activation-res').html(str)
+	}
+
+	function uploadFile(data) {
+	    $.ajax({
+	        type: "POST",
+	        url: "http://localhost:5000",
+	    	enctype : 'multipart/form-data',
+	        data: data,
+	        processData: false,
+	        contentType: false,
+	        success:function(data){
+	            update(data)
+	        },
+	        error: function(err){
+	            console.log(err);
+	        }
+	    });
+	}
+
+</script>
